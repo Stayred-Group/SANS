@@ -1,0 +1,25 @@
+# ==== Visual Studio ====
+.vs/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+ipch/
+*.ilk
+*.obj
+*.pch
+*.pdb
+*.tlog
+*.log
+*.lastbuildstate
+
+# ==== Build Output (Multi-Config: Debug, Release, etc.) ====
+out/
+build/
+bin/
+obj/
+
+# ==== Logs & Temp ====
+*.log
+*.tmp
+*.temp
