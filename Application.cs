@@ -1,5 +1,6 @@
 ﻿using Hexa.NET.ImGui;
 using Hexa.NET.ImNodes;
+using SANS;
 using SANS.Editor;
 using Stayred.Tools.SToolKit;
 using System.Numerics;
@@ -26,6 +27,7 @@ namespace Stayred.Tools.SANS {
 
             if (ImGui.Begin("SANS", windowFlags)) {
                 EWorkspace.UpdateWorkspace();
+                ProjectManager.Update();
                 ImGui.End();
             }
         }

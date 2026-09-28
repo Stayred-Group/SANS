@@ -29,6 +29,33 @@ namespace SANS {
 
                 return selected_path;
             }
+
+            public static string SelectProjectFile(string initial_path = "") {
+                string selected_file_path = "";
+
+                Thread thread = new Thread(() => {
+                    using (OpenFileDialog dialog = new OpenFileDialog()) {
+                        dialog.Title = "Select project file";
+                        dialog.Filter = "Json Files (*.json)|*.json";
+                        dialog.DefaultExt = "json";
+                        dialog.Multiselect = false;
+
+                        if (!string.IsNullOrEmpty(initial_path) && Directory.Exists(initial_path)) {
+                            dialog.InitialDirectory = initial_path;
+                        }
+
+                        if (dialog.ShowDialog() == DialogResult.OK) {
+                            selected_file_path = dialog.FileName; // Caminho completo do arquivo selecionado
+                        }
+                    }
+                });
+
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
+
+                return selected_file_path;
+            }
         }
     }
 }

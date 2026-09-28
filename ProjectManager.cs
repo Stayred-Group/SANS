@@ -9,6 +9,7 @@ namespace SANS {
         private static Project CurrentLoadedProject = null;
         private static string m_CurrentUserProjectName = "";
         private static string m_CurrentUserProjectFolder = "";
+        private static string m_CurrentUserProjectFileSelected = "";
 
         public class Project {
             public String SProjectName { get; set; }
@@ -25,7 +26,8 @@ namespace SANS {
             }
         }
 
-        public static void Update() { }
+        public static void Update() {
+        }
 
         // <---- Create Project Painel ---->
         public static void ProjectCreatorPainel() {
@@ -63,10 +65,30 @@ namespace SANS {
 
         // <---- Load Project Painel ---->
         public static void ProjectLoadPainel() {
+            ImGui.Begin("Project Loader");
+            ImGui.InputText("Project Folder", ref m_CurrentUserProjectFileSelected, 100);
+            ImGui.SameLine();
+            if (ImGui.Button("Search Project")) {
+                m_CurrentUserProjectFileSelected = FileManager.FileDialog.SelectProjectFile();
+            }
 
+
+            if (ImGui.Button("Load Project")) {
+                CreateOrLoadProject(m_CurrentUserProjectFileSelected);
+                EWorkspace.m_EnableProjectLoaderPainel = false;
+            }
+            ImGui.End();
         }
 
-        public static void CreateProject() { }
+        // <---- Create Project ---->
+        public static void CreateOrLoadProject(String _filepath) {
+            if (!File.Exists(_filepath)) {
+                throw new FileNotFoundException("The specified project file does not exist.", _filepath);
+            }
+            string content = File.ReadAllText(_filepath);
+            CurrentLoadedProject = JsonSerializer.Deserialize<Project>(content);
+        }
+
         public static void DeleteProject() { }
 
         public static void SaveProject(Project _project) { }

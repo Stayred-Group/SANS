@@ -11,6 +11,10 @@ namespace SANS.Editor {
                     EWorkspace.m_EnableProjectCreatorPainel = true;
                 }
 
+                if (ImGui.MenuItem("Load Project")) {
+                    EWorkspace.m_EnableProjectLoaderPainel = true;
+                }
+
                 ImGui.EndMenu();
             }
 
