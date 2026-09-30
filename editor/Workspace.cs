@@ -8,7 +8,7 @@ namespace SANS.Editor {
             EMenuBar.Update();
 
             if (ProjectManager.GetCurrentLoadedProject() != null) {
-                FileManager.FileSystem.DrawFileSystem(ProjectManager.GetCurrentLoadedProject().SProjectFolder);
+                FileSystem.DrawFileSystem(ProjectManager.GetCurrentLoadedProject().SProjectFolder);
             }
 
             if (m_EnableProjectCreatorPainel) { ProjectManager.ProjectCreatorPainel(); }
