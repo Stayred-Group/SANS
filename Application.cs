@@ -25,7 +25,7 @@ namespace Stayred.Tools.SANS {
             ImGui.SetNextWindowPos(new Vector2(0, 0));
             ImGui.SetNextWindowSize(ImGui.GetIO().DisplaySize);
 
-            if (ImGui.Begin("SANS", windowFlags)) {
+            if (ImGui.Begin(("SANS"), windowFlags)) {
                 EWorkspace.UpdateWorkspace();
                 ProjectManager.Update();
                 ImGui.End();
@@ -37,10 +37,13 @@ namespace Stayred.Tools.SANS {
     }
 
     public static class Application {
+        static public String CurrentApplicationVersion = "0.0.1";
+
         public static void Main() {
             // Create config 
             AppConfig _config = new AppConfig();
-            _config.AppName = "SANS";
+            _config.AppName = ("SANS - " + CurrentApplicationVersion);
+            _config.AppVersion = CurrentApplicationVersion;
             _config.ActiveImNode = true;
 
             // Create app

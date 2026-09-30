@@ -13,6 +13,7 @@ namespace SANS {
 
         public class Project {
             public String SProjectName { get; set; }
+            public String SProjectVersion { get; set; }
             public String SProjectFolder { get; set; }
             public String SProjectFullPath { get; set; }
 
@@ -49,6 +50,7 @@ namespace SANS {
 
                 CurrentLoadedProject = new Project();
                 CurrentLoadedProject.SProjectName = m_CurrentUserProjectName;
+                CurrentLoadedProject.SProjectVersion = "0.0.1";
                 CurrentLoadedProject.SProjectFolder = m_CurrentUserProjectFolder;
                 CurrentLoadedProject.SProjectFullPath = fullPath;
 
@@ -63,23 +65,6 @@ namespace SANS {
             ImGui.End();
         }
 
-        // <---- Load Project Painel ---->
-        public static void ProjectLoadPainel() {
-            ImGui.Begin("Project Loader");
-            ImGui.InputText("Project Folder", ref m_CurrentUserProjectFileSelected, 100);
-            ImGui.SameLine();
-            if (ImGui.Button("Search Project")) {
-                m_CurrentUserProjectFileSelected = FileManager.FileDialog.SelectProjectFile();
-            }
-
-
-            if (ImGui.Button("Load Project")) {
-                CreateOrLoadProject(m_CurrentUserProjectFileSelected);
-                EWorkspace.m_EnableProjectLoaderPainel = false;
-            }
-            ImGui.End();
-        }
-
         // <---- Create Project ---->
         public static void CreateOrLoadProject(String _filepath) {
             if (!File.Exists(_filepath)) {
@@ -89,9 +74,15 @@ namespace SANS {
             CurrentLoadedProject = JsonSerializer.Deserialize<Project>(content);
         }
 
-        public static void DeleteProject() { }
+        // <---- Save Project ---->
+        public static void SaveCurrentProject() {
+            if (CurrentLoadedProject != null) { 
+                CurrentLoadedProject.Save();
+                Console.WriteLine("[SANS::INFO] Current project saved");
+            }
+        }
 
-        public static void SaveProject(Project _project) { }
-        public static void LoadProject() { }
+        // <---- Get CurrentLoadedProject ---->
+        public static Project GetCurrentLoadedProject() { return CurrentLoadedProject; }
     }
 }

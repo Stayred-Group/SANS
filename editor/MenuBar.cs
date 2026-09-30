@@ -6,13 +6,27 @@ namespace SANS.Editor {
             ImGui.BeginMainMenuBar();
 
             if (ImGui.BeginMenu("Project")) {
+
+                // <---- If exists project loaded, allow new options ---->
+                if (ProjectManager.GetCurrentLoadedProject() != null) {
+                    if (ImGui.MenuItem("Config Project")) {
+                    }
+
+                    if (ImGui.MenuItem("Save Project")) {
+                        ProjectManager.SaveCurrentProject();
+                    }
+
+                    ImGui.Separator();
+                }
+                
                 // <---- Create Project ---->
                 if (ImGui.MenuItem("Create Project")) {
                     EWorkspace.m_EnableProjectCreatorPainel = true;
                 }
 
+                // <---- Load Project ---->
                 if (ImGui.MenuItem("Load Project")) {
-                    EWorkspace.m_EnableProjectLoaderPainel = true;
+                    ProjectManager.CreateOrLoadProject(FileManager.FileDialog.SelectProjectFile());
                 }
 
                 ImGui.EndMenu();
