@@ -55,11 +55,11 @@ namespace SANS {
                 CurrentLoadedProject.SProjectFullPath = fullPath;
 
                 CurrentLoadedProject.Save();
-                EWorkspace.m_EnableProjectCreatorPainel = false;
+                UIEditor.m_EnableProjectCreatorPainel = false;
             }
 
             if (ImGui.Button("Cancel")) {
-                EWorkspace.m_EnableProjectCreatorPainel = false;
+                UIEditor.m_EnableProjectCreatorPainel = false;
             }
 
             ImGui.End();

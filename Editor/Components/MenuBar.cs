@@ -1,6 +1,6 @@
 ﻿using Hexa.NET.ImGui;
 
-namespace SANS.Editor {
+namespace SANS.Editor.Components {
     public static class EMenuBar {
         static public void Update() {
             ImGui.BeginMainMenuBar();
@@ -21,7 +21,7 @@ namespace SANS.Editor {
                 
                 // <---- Create Project ---->
                 if (ImGui.MenuItem("Create Project")) {
-                    EWorkspace.m_EnableProjectCreatorPainel = true;
+                    UIEditor.m_EnableProjectCreatorPainel = true;
                 }
 
                 // <---- Load Project ---->

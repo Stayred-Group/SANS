@@ -26,8 +26,10 @@ namespace Stayred.Tools.SANS {
             ImGui.SetNextWindowSize(ImGui.GetIO().DisplaySize);
 
             if (ImGui.Begin(("SANS"), windowFlags)) {
-                EWorkspace.UpdateWorkspace();
+
+                UIEditor.DrawEditor();
                 ProjectManager.Update();
+
                 ImGui.End();
             }
         }
