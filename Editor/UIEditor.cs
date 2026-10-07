@@ -13,12 +13,10 @@ namespace SANS.Editor {
             if (ProjectManager.GetCurrentLoadedProject() != null) {
                 // <----- File Tree ----->
                 FileTree.DrawFileTree(ProjectManager.GetCurrentLoadedProject().SProjectFolder);
-                FileTree.DrawCreatorsPopup();
 
                 // <----- Workspace ----->
                 UIWorkspace.Draw();
             }
-
 
             // Others and Popups
             if (m_EnableProjectCreatorPainel) { ProjectManager.ProjectCreatorPainel(); }
