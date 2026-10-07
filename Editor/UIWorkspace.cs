@@ -1,10 +1,6 @@
 ﻿using Hexa.NET.ImGui;
 using SANS.Editor.Components;
 using SANS.Editor.Panels;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Text.Json;
 
 namespace SANS.Editor {
@@ -37,6 +33,11 @@ namespace SANS.Editor {
             public void Init() {
                 IsOpen = true;
                 _tabsOpened[CurrentDialogueFile.FilePath] = this;
+                CurrentDocumentPanel.Init();
+            }
+
+            public void Shutdown() {
+                CurrentDocumentPanel.Shutdown();
             }
 
             public bool IsOpen = false;
@@ -119,7 +120,7 @@ namespace SANS.Editor {
 
             switch (_file.Type) {
                 case "AdvancedDialogue":
-                    new_tab.CurrentDocumentPanel = new AdvancedDialoguePanel();
+                    new_tab.CurrentDocumentPanel = new SANS.Editor.Panels.AdvancedDialogue.AdvancedDialoguePanel();
                     break;
             }
 

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace SANS.Editor.Panels {
     public abstract class BaseDocumentPanel {
+        public virtual void Init() { }
+        public virtual void Shutdown() { }
+
         public virtual void Draw() { }
         public virtual void Save() { }
         public virtual void load() { }

@@ -319,8 +319,7 @@ namespace SANS.Editor.Components {
             ImGui.Text(_fileCreatorType);
 
             if (ImGui.IsWindowAppearing()) ImGui.SetKeyboardFocusHere();
-            bool enter = ImGui.InputText("File Name", ref _fileCreatorNewName, 100,
-                                         ImGuiInputTextFlags.EnterReturnsTrue);
+            bool enter = ImGui.InputText("File Name", ref _fileCreatorNewName, 100, ImGuiInputTextFlags.EnterReturnsTrue);
             ImGui.SameLine();
             ImGui.TextDisabled(Extension);
 
