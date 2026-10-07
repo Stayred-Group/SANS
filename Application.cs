@@ -9,6 +9,7 @@ namespace Stayred.Tools.SANS {
     public class SansApp : App {
 
         public override void OnInit() {
+            UIEditor.Init();
         }
 
         public override void OnUpdate() {

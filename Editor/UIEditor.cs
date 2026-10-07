@@ -5,6 +5,10 @@ namespace SANS.Editor {
     public static class UIEditor {
         public static bool m_EnableProjectCreatorPainel = false;
 
+        public static void Init() {
+            UIWorkspace.Init();
+        }
+
         public static void DrawEditor() {
             // Header
             EMenuBar.Update();

@@ -1,4 +1,5 @@
 ﻿using Hexa.NET.ImGui;
+using SANS.Editor.Components;
 using SANS.Editor.Panels;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,14 @@ using System.Text.Json;
 
 namespace SANS.Editor {
     public static class UIWorkspace {
-        static private Dictionary<string, WorkspaceTab> _tabsOpened = new Dictionary<string, WorkspaceTab>();
+        static private bool _initialized = false;
+        static private Dictionary<string, WorkspaceTab> _tabsOpened = new (StringComparer.OrdinalIgnoreCase);
         static private List<WorkspaceTab> _tabsToInit = new List<WorkspaceTab>();
         static private List<WorkspaceTab> _tabsToRemove = new List<WorkspaceTab>();
 
         ///////////////////////////////////////////////
         /// CLASSES
-        ///////////////////////////////////////////////
+        /////////////////////////////////////////////// 
         
         // Dialogue File
         public class DialogueFile {
@@ -34,7 +36,7 @@ namespace SANS.Editor {
 
             public void Init() {
                 IsOpen = true;
-                _tabsOpened[CurrentDialogueFile.Name] = this;
+                _tabsOpened[CurrentDialogueFile.FilePath] = this;
             }
 
             public bool IsOpen = false;
@@ -44,6 +46,15 @@ namespace SANS.Editor {
         ///////////////////////////////////////////////
         // CALLS
         ///////////////////////////////////////////////
+        
+        public static void Init() {
+            if (_initialized) return;
+            _initialized = true;
+
+            FileTree.OnPathRenamed += HandlePathRenamed;
+            FileTree.OnPathDeleted += HandlePathDeleted;
+        }
+
         public static void Draw() {
             ImGui.Begin("Workspace");
 
@@ -118,6 +129,43 @@ namespace SANS.Editor {
         // Remove your fucking tab.
         public static void RemoveTab(WorkspaceTab _tab) {
             _tabsToRemove.Add(_tab);
+        }
+
+        ///////////////////////////////////////////////
+        // HELPERS
+        ///////////////////////////////////////////////
+
+        // True if 'path' is the target itself or lives inside it (when the target is a folder)
+        static private bool IsAffected(string path, string target) =>
+            path.Equals(target, StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith(target + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+
+        ///////////////////////////////////////////////
+        // SIGNALS
+        ///////////////////////////////////////////////
+
+        static void HandlePathRenamed(string oldPath, string newPath) {
+            foreach (var (path, tab) in _tabsOpened.ToList()) {
+                if (!IsAffected(path, oldPath)) continue;
+
+                string newFilePath = path.Equals(oldPath, StringComparison.OrdinalIgnoreCase) ? newPath : Path.Combine(newPath, path[(oldPath.Length + 1)..]);
+                var file = tab.CurrentDialogueFile;
+                file.FilePath = newFilePath;
+                file.Name = Path.GetFileNameWithoutExtension(newFilePath);
+
+                // Remove the older one and append the new one.
+                _tabsOpened.Remove(path);
+                _tabsOpened[newFilePath] = tab;
+            }
+        }
+
+        static void HandlePathDeleted(string deletedPath) {
+            foreach (var (path, tab) in _tabsOpened.ToList()) {
+                if (!IsAffected(path, deletedPath)) continue;
+
+                _tabsOpened.Remove(path);
+                if (!_tabsToRemove.Contains(tab)) _tabsToRemove.Add(tab);
+            }
         }
     }
 }
