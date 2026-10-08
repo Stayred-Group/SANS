@@ -16,18 +16,40 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
             AddNode(new GraphStartNode(), new Vector2(10, 0));
             AddNode(new GraphStartNode(), new Vector2(-10, 0));
             AddNode(new GraphStartNode(), new Vector2(15, -12));
+
+            ImGuiP.DockBuilderRemoveNode(m_DockspaceID);
+            ImGuiP.DockBuilderAddNode(m_DockspaceID);
+            ImGuiP.DockBuilderSetNodeSize(m_DockspaceID, ImGui.GetContentRegionAvail());
+
+            uint mainNode = 0;
+            uint leftNode = 0;
+            unsafe {
+                ImGuiP.DockBuilderSplitNode(m_DockspaceID, ImGuiDir.Left, 0.30f, &leftNode, &mainNode);
+            }
+
+            ImGuiP.DockBuilderDockWindow("NodeGraphCanva", mainNode);
+            ImGuiP.DockBuilderDockWindow("LeftBar", leftNode);
+
+            ImGuiP.DockBuilderFinish(m_DockspaceID);
         }
 
         public override void Draw() {
             var io = ImNodes.GetIO();
 
-            ImNodes.BeginNodeEditor();
+            ImGui.Begin("LeftBar");
+            ImGui.Text("Left Side");
+            ImGui.End();
 
-            foreach (var node in _nodes) node.Render();
-            foreach (var link in _links) ImNodes.Link(link.Id, link.FromId, link.ToId);
+            if (ImGui.Begin("NodeGraphCanva")) {
+                ImNodes.BeginNodeEditor();
 
-            ImNodes.MiniMap(.1f);
-            ImNodes.EndNodeEditor();
+                foreach (var node in _nodes) node.Render();
+                foreach (var link in _links) ImNodes.Link(link.Id, link.FromId, link.ToId);
+
+                ImNodes.MiniMap(.1f);
+                ImNodes.EndNodeEditor();
+                ImGui.End();
+            }
 
             int from = 0, to = 0;
             if (ImNodes.IsLinkCreated(ref from, ref to)) {

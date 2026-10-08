@@ -2,6 +2,7 @@
 using SANS.Editor.Components;
 using SANS.Editor.Panels;
 using System.Text.Json;
+using System.Numerics;
 
 namespace SANS.Editor {
     public static class UIWorkspace {
@@ -64,6 +65,7 @@ namespace SANS.Editor {
                 // Render panels
                 foreach (WorkspaceTab _tab in _tabsOpened.Values) {
                     if (ImGui.BeginTabItem(_tab.CurrentDialogueFile.Name, ref _tab.IsOpen)) {
+                        ImGui.DockSpace(_tab.CurrentDocumentPanel.m_DockspaceID, new Vector2(0, 0), ImGuiDockNodeFlags.None);
                         _tab.CurrentDocumentPanel.Draw();
                         ImGui.EndTabItem();
                     }
@@ -72,6 +74,7 @@ namespace SANS.Editor {
                 // Init Tabs
                 for (int i = _tabsToInit.Count - 1; i >= 0; i--) {
                     WorkspaceTab _tab = _tabsToInit[i];
+                    _tab.CurrentDocumentPanel.m_DockspaceID = ImGui.GetID($"DockSpace_{_tab.CurrentDialogueFile.FilePath}");
                     _tab.Init();
                     _tabsToInit.Remove(_tab);
                 }
