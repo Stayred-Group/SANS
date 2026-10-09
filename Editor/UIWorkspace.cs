@@ -65,7 +65,7 @@ namespace SANS.Editor {
                 // Render panels
                 foreach (WorkspaceTab _tab in _tabsOpened.Values) {
                     if (ImGui.BeginTabItem(_tab.CurrentDialogueFile.Name, ref _tab.IsOpen)) {
-                        ImGui.DockSpace(_tab.CurrentDocumentPanel.m_DockspaceID, new Vector2(0, 0), ImGuiDockNodeFlags.None);
+                        ImGui.DockSpace(_tab.CurrentDocumentPanel.m_DockspaceID, new Vector2(0.0f, 0.0f), ImGuiDockNodeFlags.None);
                         _tab.CurrentDocumentPanel.Draw();
                         ImGui.EndTabItem();
                     }
@@ -74,6 +74,7 @@ namespace SANS.Editor {
                 // Init Tabs
                 for (int i = _tabsToInit.Count - 1; i >= 0; i--) {
                     WorkspaceTab _tab = _tabsToInit[i];
+                    _tab.CurrentDocumentPanel.m_DocumentFilePath = _tab.CurrentDialogueFile.FilePath;
                     _tab.CurrentDocumentPanel.m_DockspaceID = ImGui.GetID($"DockSpace_{_tab.CurrentDialogueFile.FilePath}");
                     _tab.Init();
                     _tabsToInit.Remove(_tab);

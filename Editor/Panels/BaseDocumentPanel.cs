@@ -4,6 +4,7 @@ using System.Text;
 
 namespace SANS.Editor.Panels {
     public abstract class BaseDocumentPanel {
+        public string m_DocumentFilePath = "";
         public uint m_DockspaceID = 0;
 
         public virtual void Init() { }

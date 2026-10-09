@@ -12,7 +12,7 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
         }
 
         public override void DrawBody() {
-            ImGui.SetNextItemWidth(130.0f);
+            //ImGui.SetNextItemWidth(130.0f);
             ImGui.InputText("Start ID", ref StartID, 50, ImGuiInputTextFlags.EnterReturnsTrue);
         }
 

@@ -8,39 +8,61 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
     public class AdvancedDialoguePanel : BaseDocumentPanel {
         private readonly List<GraphBaseNode> _nodes = new();
         private readonly List<GraphLink> _links = new();
+        private readonly Dictionary<int, GraphBaseNode> _nodesID = new();
+
+        string m_NodeGraphCanvaTitle = "";
+        string m_InspectorTitle = "";
 
         public override void Init() {
+            m_NodeGraphCanvaTitle = $"Node Graph###NodeGraph_{m_DocumentFilePath}";
+            m_InspectorTitle = $"Inspector###Inspector_{m_DocumentFilePath}";
+
             var io = ImNodes.GetIO();
 
             AddNode(new GraphStartNode(), new Vector2(0, 0));
             AddNode(new GraphStartNode(), new Vector2(10, 0));
             AddNode(new GraphStartNode(), new Vector2(-10, 0));
-            AddNode(new GraphStartNode(), new Vector2(15, -12));
+            AddNode(new GraphDialogueNode(), new Vector2(15, -12));
 
             ImGuiP.DockBuilderRemoveNode(m_DockspaceID);
             ImGuiP.DockBuilderAddNode(m_DockspaceID);
-            ImGuiP.DockBuilderSetNodeSize(m_DockspaceID, ImGui.GetContentRegionAvail());
 
-            uint mainNode = 0;
-            uint leftNode = 0;
-            unsafe {
-                ImGuiP.DockBuilderSplitNode(m_DockspaceID, ImGuiDir.Left, 0.30f, &leftNode, &mainNode);
+            Vector2 mainViewportSize = ImGui.GetMainViewport().Size;
+            if (mainViewportSize.X <= 0 || mainViewportSize.Y <= 0) {
+                mainViewportSize = new Vector2(1280, 720);
             }
 
-            ImGuiP.DockBuilderDockWindow("NodeGraphCanva", mainNode);
-            ImGuiP.DockBuilderDockWindow("LeftBar", leftNode);
+            ImGuiP.DockBuilderSetNodeSize(m_DockspaceID, mainViewportSize);
+
+            uint mainNode = 0;
+            uint RightNode = 0;
+            unsafe {
+                ImGuiP.DockBuilderSplitNode(m_DockspaceID, ImGuiDir.Right, 0.30f, &RightNode, &mainNode);
+            }
+
+            ImGuiP.DockBuilderDockWindow(m_NodeGraphCanvaTitle, mainNode);
+            ImGuiP.DockBuilderDockWindow(m_InspectorTitle, RightNode);
 
             ImGuiP.DockBuilderFinish(m_DockspaceID);
         }
 
         public override void Draw() {
-            var io = ImNodes.GetIO();
+            // <-------------------->
+            // Node Graph
+            // <-------------------->
+            if (ImGui.Begin(m_NodeGraphCanvaTitle)) {
+                ImGui.Columns(2, "NodeGraphContent", true);
 
-            ImGui.Begin("LeftBar");
-            ImGui.Text("Left Side");
-            ImGui.End();
+                // Node Selector Content
+                var selected = GetSelectedNodes();
+                if (selected.Count == 1) {
+                    GraphBaseNode node = selected[0];
+                    ImGui.Text(node.NodeName);
+                    node.DrawBody();
+                }
 
-            if (ImGui.Begin("NodeGraphCanva")) {
+                ImGui.NextColumn();
+
                 ImNodes.BeginNodeEditor();
 
                 foreach (var node in _nodes) node.Render();
@@ -48,6 +70,15 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
 
                 ImNodes.MiniMap(.1f);
                 ImNodes.EndNodeEditor();
+
+                ImGui.End();
+            }
+
+            // <-------------------->
+            // Inspector
+            // <-------------------->
+            if (ImGui.Begin(m_InspectorTitle)) {
+                ImGui.Text("TEst test ets");
                 ImGui.End();
             }
 
@@ -72,9 +103,26 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
 
         public T AddNode<T>(T node, Vector2 pos) where T : GraphBaseNode {
             _nodes.Add(node);
+            _nodesID[node.NodeID] = node;
+
             node.Init();
             ImNodes.SetNodeGridSpacePos(node.NodeID, pos);
             return node;
+        }
+
+        public List<GraphBaseNode> GetSelectedNodes() {
+            var result = new List<GraphBaseNode>();
+            int count = ImNodes.NumSelectedNodes();
+            if (count <= 0) return result;
+
+            int[] ids = new int[count];
+            ImNodes.GetSelectedNodes(ref ids[0]);
+
+            foreach (int id in ids)
+                if (_nodesID.TryGetValue(id, out var node))
+                    result.Add(node);
+
+            return result;
         }
     }
 }

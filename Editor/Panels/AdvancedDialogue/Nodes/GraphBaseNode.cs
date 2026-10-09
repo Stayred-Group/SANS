@@ -1,6 +1,9 @@
 ﻿using Hexa.NET.ImGui;
 using Hexa.NET.ImNodes;
+using System.Numerics;
 using System.Text.Json;
+using System.Xml.Linq;
+
 
 namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
     public static class GraphIDGenerator {
@@ -8,9 +11,9 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
         public static int Next() => _next++;
     }
 
-    public readonly struct GraphID {
+    public class GraphID {
         public readonly int Id;
-        public readonly string Label;
+        public string Label;
         public GraphID(int id, string label) { Id = id; Label = label; }
     }
 
@@ -33,7 +36,8 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
 
         protected int AddInput(string label) {
             int id = GraphIDGenerator.Next();
-            _inputs.Add(new GraphID(id, label));
+            var graphID = new GraphID(id, label);
+            _inputs.Add(graphID);
             return id;
         }
 
@@ -41,6 +45,18 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
             int id = GraphIDGenerator.Next();
             _outputs.Add(new GraphID(id, label));
             return id;
+        }
+
+        protected void SetOutputLabel(int id, string label) {
+            var output = _outputs.Find(o => o.Id == id);
+            if (output != null) {
+                output.Label = label;
+            }
+        }
+
+        protected void RemoveOutput(int id) {
+            _outputs.RemoveAll(o => o.Id == id);
+            // Links that use this ID must be removed by the graph (see section 4)
         }
 
         public virtual void Init() { }
@@ -63,7 +79,7 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
                 ImNodes.EndInputAttribute();
             }
 
-            DrawBody();
+            //DrawBody();
 
             foreach (var output in _outputs) {
                 ImNodes.BeginOutputAttribute(output.Id);
