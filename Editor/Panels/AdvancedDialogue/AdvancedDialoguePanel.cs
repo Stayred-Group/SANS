@@ -112,8 +112,10 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
             // Save connections
             var connections = new List<object>();
             foreach (GraphLink link in _links) {
-                var from = _nodesID[link.FromId - 1];
-                var to = _nodesID[link.ToId - 1];
+                var from = FindPinOwner(link.FromId);
+                var to = FindPinOwner(link.ToId);
+
+                if (from == null || to == null) continue;
 
                 connections.Add(new Dictionary<string, object> {
                     ["from_node"] = from.NodeID,
@@ -208,5 +210,7 @@ namespace SANS.Editor.Panels.AdvancedDialogue {
 
             return result;
         }
+
+        GraphBaseNode FindPinOwner(int pinId) => _nodes.Find(n => n.Inputs.Any(i => i.Id == pinId) || n.Outputs.Any(o => o.Id == pinId));    
     }
 }
