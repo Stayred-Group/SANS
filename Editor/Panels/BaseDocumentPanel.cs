@@ -11,7 +11,7 @@ namespace SANS.Editor.Panels {
         public virtual void Shutdown() { }
 
         public virtual void Draw() { }
-        public virtual void Save() { }
-        public virtual void load() { }
+        public virtual string Save() { return ""; }
+        public virtual void Load(UIWorkspace.DialogueFile _file) { }
     }
 }

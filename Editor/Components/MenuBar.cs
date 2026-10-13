@@ -5,6 +5,9 @@ namespace SANS.Editor.Components {
         static public void Update() {
             ImGui.BeginMainMenuBar();
 
+            // ///////////////////////////////////////
+            // Project
+            // ///////////////////////////////////////
             if (ImGui.BeginMenu("Project")) {
 
                 // <---- If exists project loaded, allow new options ---->
@@ -32,10 +35,19 @@ namespace SANS.Editor.Components {
                 ImGui.EndMenu();
             }
 
+            // ///////////////////////////////////////
+            // File
+            // ///////////////////////////////////////
             if (ImGui.BeginMenu("File")) {
+                if (ImGui.MenuItem("Save File")) {
+                    UIWorkspace.SaveAllFiles();
+                }
                 ImGui.EndMenu();
             }
 
+            // ///////////////////////////////////////
+            // Edit
+            // ///////////////////////////////////////
             if (ImGui.BeginMenu("Edit")) {
                 ImGui.EndMenu();
             }

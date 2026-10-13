@@ -21,7 +21,7 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
             ImGui.InputTextMultiline("Dialogue Text", ref DialogueTextMultiline, 2000);
 
             foreach (DialogueOption option in OptionsList) {
-                ImGui.InputText($"Option Text###option_{option.OutputID}", ref option.OptionText, 200);
+                ImGui.InputText($"###option_{option.OutputID}", ref option.OptionText, 200);
                 SetOutputLabel(option.OutputID, option.OptionText);
                 ImGui.SameLine();
                 if (ImGui.Button($"Delete##option_{option.OutputID}")) {

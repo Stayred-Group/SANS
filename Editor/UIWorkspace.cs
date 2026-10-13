@@ -1,8 +1,11 @@
 ﻿using Hexa.NET.ImGui;
 using SANS.Editor.Components;
 using SANS.Editor.Panels;
-using System.Text.Json;
 using System.Numerics;
+using System.Text.Json;
+
+using static SANS.Editor.UIWorkspace;
+using SANS.Systems;
 
 namespace SANS.Editor {
     public static class UIWorkspace {
@@ -22,6 +25,8 @@ namespace SANS.Editor {
 
             public string Name { get; set; }
             public string Type { get; set; }
+
+            public string Content { get; set; }
 
             public bool IsDirty = false;
         }
@@ -92,6 +97,26 @@ namespace SANS.Editor {
             ImGui.End();
         }
 
+        // Create new tab and increase on TabsToInit.
+        public static WorkspaceTab AddTab(DialogueFile _file) {
+            WorkspaceTab new_tab = new WorkspaceTab();
+            new_tab.CurrentDialogueFile = _file;
+
+            switch (_file.Type) {
+                case "AdvancedDialogue":
+                    new_tab.CurrentDocumentPanel = new SANS.Editor.Panels.AdvancedDialogue.AdvancedDialoguePanel();
+                    break;
+            }
+
+            _tabsToInit.Add(new_tab);
+            return new_tab;
+        }
+
+        // Remove your fucking tab.
+        public static void RemoveTab(WorkspaceTab _tab) {
+            _tabsToRemove.Add(_tab);
+        }
+
         public static void OpenFile(string _file_path) {
             if (!File.Exists(_file_path))
                 throw new FileNotFoundException("File not found.", _file_path);
@@ -105,36 +130,28 @@ namespace SANS.Editor {
                 string name = root.TryGetProperty("name", out var propName) ? propName.GetString() : "Nill";
                 string type = root.TryGetProperty("type", out var propType) ? propType.GetString() : "Nill";
 
-                file = new DialogueFile {
-                    FilePath = _file_path,
-                    Name = name,
-                    Type = type,
-                    IsDirty = false
-                };
+                file = DialogueFileSerializer.LoadFile(_file_path);
 
-                AddTab(file);
+                //file = new DialogueFile {
+                //    FilePath = _file_path,
+                //    Name = name,
+                //    Type = type,
+                //    IsDirty = false
+                //};
+
+                AddTab(file).CurrentDocumentPanel.Load(file);
             }
 
         }
 
-        // Create new tab and increase on TabsToInit.
-        public static void AddTab(DialogueFile _file) {
-            WorkspaceTab new_tab = new WorkspaceTab();
-            new_tab.CurrentDialogueFile = _file;
-
-            switch (_file.Type) {
-                case "AdvancedDialogue":
-                    new_tab.CurrentDocumentPanel = new SANS.Editor.Panels.AdvancedDialogue.AdvancedDialoguePanel();
-                    break;
+        public static void SaveAllFiles() {
+            foreach (WorkspaceTab tab in _tabsOpened.Values) {
+                tab.CurrentDialogueFile.Content = tab.CurrentDocumentPanel.Save();
+                DialogueFileSerializer.SaveToDisk(tab.CurrentDialogueFile);
             }
-
-            _tabsToInit.Add(new_tab);
         }
 
-        // Remove your fucking tab.
-        public static void RemoveTab(WorkspaceTab _tab) {
-            _tabsToRemove.Add(_tab);
-        }
+        // TODO: Get the current tab opened.
 
         ///////////////////////////////////////////////
         // HELPERS

@@ -13,6 +13,7 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
 
         public override void DrawBody() {
             //ImGui.SetNextItemWidth(130.0f);
+            SetOutputLabel(OutID, StartID);
             ImGui.InputText("Start ID", ref StartID, 50, ImGuiInputTextFlags.EnterReturnsTrue);
         }
 
@@ -22,6 +23,8 @@ namespace SANS.Editor.Panels.AdvancedDialogue.Nodes {
 
         public override void LoadData(Dictionary<string, JsonElement> data) {
             StartID = data["start_id"].GetString();
+
+            SetOutputLabel(OutID, StartID);
         }
     }
 }
